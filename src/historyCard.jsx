@@ -1,5 +1,5 @@
 import { Calendar, Dumbbell, Timer, Hash } from "lucide-react";
-import './historyCard.css';
+import './HistoryCard.css';
 
 export default function HistoryCard({ session, sessionIndex, isLoaded }) {
     return (
