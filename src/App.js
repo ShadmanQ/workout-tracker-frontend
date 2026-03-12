@@ -1,10 +1,9 @@
-import logo from './logo.svg';
-import './App.css';
-import FitnessTracker from './FitnessTracker.jsx';
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './Login';
-
+import FitnessTracker from './FitnessTracker';
+import Settings from './Settings';
+import MealTracker from './MealTracker';
 
 function App() {
   return (
@@ -15,6 +14,12 @@ function App() {
         
         {/* Home page - the fitness tracker */}
         <Route path="/home" element={<FitnessTracker />} />
+        
+        {/* Settings page */}
+        <Route path="/settings" element={<Settings />} />
+        
+        {/* Meal Tracker page */}
+        <Route path="/meal-tracker" element={<MealTracker />} />
         
         {/* Redirect root to login */}
         <Route path="/" element={<Navigate to="/login" replace />} />

@@ -288,6 +288,23 @@ body {
   color: #f9a8d4;
 }
 
+.save-button{
+  position: fixed;
+  bottom: 24px;
+  right: 250px;
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  padding: 4px 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(240, 147, 251, 0.4);
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
 .form-group {
   margin-bottom: 20px;
 }

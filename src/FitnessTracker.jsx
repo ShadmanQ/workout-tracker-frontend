@@ -4,18 +4,18 @@ import userData from './userData.json'
 import './theme.css';
 import './FitnessTracker.css';
 import HistoryCard from './historyCard';
- 
+import Sidebar from './Sidebar';
+import AddWorkout from './AddWorkout';
+
 export default function FitnessTracker() {
   // ALL HOOKS MUST BE AT THE TOP - BEFORE ANY RETURNS
   const [isLoaded, setIsLoaded] = useState(false);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [hoveredIndex, setHoveredIndex] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [quote, setQuote] = useState("Loading inspiration...");
   const [quoteAuthor, setQuoteAuthor] = useState("");
- 
+
   // Load user data from file
   useEffect(() => {
     const loadData = async () => {
@@ -32,10 +32,10 @@ export default function FitnessTracker() {
         setLoading(false);
       }
     };
- 
+
     loadData();
   }, []);
- 
+
   // Fetch a random quote from the backend
   useEffect(() => {
     const fetchQuote = async () => {
@@ -51,10 +51,10 @@ export default function FitnessTracker() {
         setQuoteAuthor("Unknown");
       }
     };
- 
+
     fetchQuote();
   }, []);
- 
+
   const workoutHistory = [
     {
       date: "January 29, 2026",
@@ -91,7 +91,7 @@ export default function FitnessTracker() {
       ]
     }
   ];
- 
+
   // Show loading screen while data is being fetched
   if (loading || !data) {
     return (
@@ -103,13 +103,15 @@ export default function FitnessTracker() {
       </div>
     );
   }
- 
+
   const progressPercentage = Math.min(100, Math.max(0, 
     (1 - Math.abs(data.currentWeight - data.goalWeight) / data.currentWeight) * 100
   ));
- 
+
   return (
     <div className="fitness-container">
+      <Sidebar />
+      
       <div className="fitness-wrapper">
         {/* Header Section */}
         <header className={`fitness-header ${isLoaded ? 'loaded' : ''}`}>
@@ -118,7 +120,7 @@ export default function FitnessTracker() {
             <h1 className="fitness-title">Hi, {data.username}</h1>
           </div>
         </header>
- 
+
         {/* Motivational Quote */}
         <div className={`quote-container ${isLoaded ? 'loaded' : ''}`}>
           <blockquote className="quote-text">
@@ -130,7 +132,7 @@ export default function FitnessTracker() {
             )}
           </blockquote>
         </div>
- 
+
         {/* Weight Progress Card */}
         <div className={`weight-card ${isLoaded ? 'loaded' : ''}`}>
           <div className="section-title">
@@ -151,7 +153,7 @@ export default function FitnessTracker() {
               <p className="stat-unit">{data.weightUnit}</p>
             </div>
           </div>
- 
+
           <div className="progress-section">
             <div className="progress-info">
               <span style={{ color: '#94a3b8' }}>Progress to goal</span>
@@ -164,14 +166,14 @@ export default function FitnessTracker() {
             </div>
           </div>
         </div>
- 
+
         {/* Workout History Section */}
         <div>
           <div className={`section-title history-header ${isLoaded ? 'loaded' : ''}`}>
             <Calendar size={24} color="#f9a8d4" />
             <h2 style={{ margin: 0 }}>Workout History</h2>
           </div>
- 
+
           <div className="history-cards">
             {workoutHistory.map((session, sessionIndex) => (
               <HistoryCard 
@@ -183,49 +185,21 @@ export default function FitnessTracker() {
             ))}
           </div>
         </div>
- 
+
         {/* Footer Spacing */}
         <div style={{ height: '48px' }}></div>
       </div>
- 
+
       {/* Log Workout Button */}
       <button className="log-button" onClick={() => setIsModalOpen(true)}>
         + Log Workout
       </button>
- 
-      {/* Modal Overlay */}
-      {isModalOpen && (
-        <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h2 className="modal-title">New Workout</h2>
-              <button className="close-button" onClick={() => setIsModalOpen(false)}>
-                ×
-              </button>
-            </div>
- 
-            <div className="form-group">
-              <label className="form-label" htmlFor="workout-date">
-                Workout Date
-              </label>
-              <input
-                id="workout-date"
-                type="date"
-                className="date-input"
-                value={selectedDate}
-                onChange={(e) => setSelectedDate(e.target.value)}
-              />
-            </div>
- 
-            {/* Add your workout form fields here */}
-            <div className="placeholder-area">
-              <p className="placeholder-text">
-                Add your workout input fields here
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
+
+      {/* Workout Modal */}
+      <AddWorkout 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+      />
     </div>
   );
 }
