@@ -92,6 +92,8 @@ export default function FitnessTracker() {
     }
   ];
 
+  const greetings = ["Hi, ","Hello, ","Hey there, ", "O shit waddup, ", "Welcome back, "]
+
   // Show loading screen while data is being fetched
   if (loading || !data) {
     return (
@@ -117,7 +119,7 @@ export default function FitnessTracker() {
         <header className={`fitness-header ${isLoaded ? 'loaded' : ''}`}>
           <div className="header-flex">
             <Activity className="icon-float" size={40} color="#f9a8d4" />
-            <h1 className="fitness-title">Hi, {data.username}</h1>
+            <h1 className="fitness-title">{greetings[Math.floor(Math.random()*greetings.length)]} {data.username}</h1>
           </div>
         </header>
 

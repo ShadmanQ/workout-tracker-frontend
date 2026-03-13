@@ -19,10 +19,12 @@
   border: 1px solid rgba(240, 147, 251, 0.3);
   border-radius: 24px;
   padding: 32px;
-  max-width: 500px;
+  max-width: 600px;
   width: 90%;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
   position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 /* Modal Header */
@@ -89,20 +91,156 @@
   background: rgba(255, 255, 255, 0.08);
 }
 
-/* Placeholder Area */
-.placeholder-area {
+/* Workout Section */
+.workout-section {
   margin-top: 24px;
-  padding: 16px;
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 12px;
-  border: 1px dashed rgba(255, 255, 255, 0.2);
+  margin-bottom: 24px;
 }
 
-.placeholder-text {
-  margin: 0;
+.section-heading {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #e2e8f0;
+  margin: 0 0 16px 0;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Exercise Row */
+.exercise-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  margin-bottom: 16px;
+}
+
+.exercise-row:last-of-type {
+  margin-bottom: 0;
+}
+
+.exercise-name-group {
+  flex: 2;
+  margin-bottom: 0;
+}
+
+.exercise-value-group {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+/* Workout Input Field */
+.workout-input {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 1rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+
+.workout-input::placeholder {
   color: #94a3b8;
-  font-size: 0.875rem;
-  text-align: center;
+}
+
+.workout-input:focus {
+  outline: none;
+  border-color: rgba(240, 147, 251, 0.5);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Remove spinner arrows from number inputs */
+.workout-input[type="number"]::-webkit-inner-spin-button,
+.workout-input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.workout-input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Add Exercise Button */
+.add-exercise-button {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  background: rgba(168, 85, 247, 0.15);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  border-radius: 12px;
+  color: #a78bfa;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.add-exercise-button:hover {
+  background: rgba(168, 85, 247, 0.25);
+  border-color: rgba(168, 85, 247, 0.5);
+  transform: scale(1.05);
+}
+
+.add-exercise-button:active {
+  transform: scale(0.95);
+}
+
+/* Full Width Add Button */
+.add-exercise-button-full {
+  width: 100%;
+  background: rgba(168, 85, 247, 0.15);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  border-radius: 12px;
+  color: #a78bfa;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  margin-top: 12px;
+}
+
+.add-exercise-button-full:hover {
+  background: rgba(168, 85, 247, 0.25);
+  border-color: rgba(168, 85, 247, 0.5);
+  transform: translateY(-2px);
+}
+
+.add-exercise-button-full:active {
+  transform: translateY(0);
+}
+
+/* Submit Button */
+.submit-button {
+  width: 100%;
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 14px 28px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 24px rgba(240, 147, 251, 0.4);
+  margin-top: 8px;
+}
+
+.submit-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(240, 147, 251, 0.5);
+}
+
+.submit-button:active {
+  transform: translateY(0);
 }
 
 /* Responsive */
@@ -110,9 +248,27 @@
   .modal-content {
     padding: 24px;
     width: 95%;
+    max-width: 100%;
   }
   
   .modal-title {
     font-size: 1.5rem;
+  }
+
+  .exercise-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .exercise-name-group,
+  .exercise-value-group {
+    flex: 1;
+    margin-bottom: 12px;
+  }
+
+  .add-exercise-button {
+    width: 100%;
+    height: 44px;
+    margin-bottom: 12px;
   }
 }
