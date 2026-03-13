@@ -3,7 +3,6 @@ import { Activity, TrendingDown, Calendar, Dumbbell, Timer, Hash } from 'lucide-
 import userData from './userData.json'
 import './theme.css';
 import './FitnessTracker.css';
-import HistoryCard from './HistoryCard';
 import Sidebar from './Sidebar';
 import AddWorkout from './AddWorkout';
 
