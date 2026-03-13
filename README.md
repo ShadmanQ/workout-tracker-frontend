@@ -2,6 +2,9 @@
 
 A modern, elegant fitness tracking application designed to help you monitor your workout progress, track your weight goals, and stay motivated on your fitness journey.
 
+### Live Demo Available [Here](https://workout-tracker-frontend-green.vercel.app/login) 
+(use any credentials you like, POC does not store any data)
+
 ## 🎯 Purpose
 
 FitTrack is built to be your personal fitness companion — a simple yet powerful tool to log workouts, visualize progress, and maintain consistency in your fitness routine. Whether you're just starting out or you're a seasoned athlete, this app helps you stay accountable and see how far you've come.
