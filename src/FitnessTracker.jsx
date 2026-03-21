@@ -15,47 +15,7 @@ export default function FitnessTracker() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [quote, setQuote] = useState("Loading inspiration...");
   const [quoteAuthor, setQuoteAuthor] = useState("");
-
-  // Load user data from file
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        // Simulate a slight delay to mimic database loading
-        await new Promise(resolve => setTimeout(resolve, 500));
-        setData(userData);
-        setLoading(false);
-        
-        // Trigger animations after data loads
-        setTimeout(() => setIsLoaded(true), 100);
-      } catch (error) {
-        console.error('Error loading user data:', error);
-        setLoading(false);
-      }
-    };
-
-    loadData();
-  }, []);
-
-  // Fetch a random quote from the backend
-  useEffect(() => {
-    const fetchQuote = async () => {
-      try {
-        const response = await fetch('http://localhost:8000/api/quote/random');
-        const data = await response.json();
-        setQuote(data.text);
-        setQuoteAuthor(data.author);
-      } catch (error) {
-        console.error('Error fetching quote:', error);
-        // Fallback quote if backend is not available
-        setQuote("Every workout is progress, no matter how small.");
-        setQuoteAuthor("Unknown");
-      }
-    };
-
-    fetchQuote();
-  }, []);
-
-  const workoutHistory = [
+  const [workoutHistory, setWorkoutHistory] = useState([
     {
       date: "January 29, 2026",
       workouts: [
@@ -90,9 +50,91 @@ export default function FitnessTracker() {
         { name: "Running", type: "time", value: "30 min" }
       ]
     }
-  ];
+  ]);
 
-  const greetings = ["Hi, ","Hello, ","Hey there, ", "O shit waddup, ", "Welcome back, "]
+  // Load user data from file
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        // Simulate a slight delay to mimic database loading
+        await new Promise(resolve => setTimeout(resolve, 500));
+        setData(userData);
+        setLoading(false);
+
+        // Trigger animations after data loads
+        setTimeout(() => setIsLoaded(true), 100);
+      } catch (error) {
+        console.error('Error loading user data:', error);
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, []);
+
+  // Fetch a random quote from the backend
+  useEffect(() => {
+    const fetchQuote = async () => {
+      try {
+        const response = await fetch('http://localhost:8000/api/quote/random');
+        const data = await response.json();
+        setQuote(data.text);
+        setQuoteAuthor(data.author);
+      } catch (error) {
+        console.error('Error fetching quote:', error);
+        // Fallback quote if backend is not available
+        setQuote("Every workout is progress, no matter how small.");
+        setQuoteAuthor("Unknown");
+      }
+    };
+
+    fetchQuote();
+  }, []);
+
+  const addWorkoutSession = (newSession) =>{
+    setWorkoutHistory([newSession,...workoutHistory]);
+  }
+
+
+
+  // const workoutHistory = [
+  //   {
+  //     date: "January 29, 2026",
+  //     workouts: [
+  //       { name: "Bench Press", type: "weight", value: "185 lbs × 8 reps" },
+  //       { name: "Squats", type: "weight", value: "225 lbs × 10 reps" },
+  //       { name: "Pull-ups", type: "reps", value: "12 reps" },
+  //       { name: "Running", type: "time", value: "25 min" }
+  //     ]
+  //   },
+  //   {
+  //     date: "January 27, 2026",
+  //     workouts: [
+  //       { name: "Deadlift", type: "weight", value: "275 lbs × 6 reps" },
+  //       { name: "Overhead Press", type: "weight", value: "115 lbs × 8 reps" },
+  //       { name: "Cycling", type: "time", value: "40 min" }
+  //     ]
+  //   },
+  //   {
+  //     date: "January 25, 2026",
+  //     workouts: [
+  //       { name: "Leg Press", type: "weight", value: "320 lbs × 12 reps" },
+  //       { name: "Lat Pulldown", type: "weight", value: "150 lbs × 10 reps" },
+  //       { name: "Plank", type: "time", value: "3 min" },
+  //       { name: "Swimming", type: "time", value: "30 min" }
+  //     ]
+  //   },
+  //   {
+  //     date: "January 23, 2026",
+  //     workouts: [
+  //       { name: "Incline Bench Press", type: "weight", value: "155 lbs × 10 reps" },
+  //       { name: "Romanian Deadlift", type: "weight", value: "185 lbs × 12 reps" },
+  //       { name: "Running", type: "time", value: "30 min" }
+  //     ]
+  //   }
+  // ];
+
+  const greetings = ["Hi, ", "Hello, ", "Hey there, ", "O shit waddup, ", "Welcome back, "]
 
   // Show loading screen while data is being fetched
   if (loading || !data) {
@@ -106,20 +148,20 @@ export default function FitnessTracker() {
     );
   }
 
-  const progressPercentage = Math.min(100, Math.max(0, 
+  const progressPercentage = Math.min(100, Math.max(0,
     (1 - Math.abs(data.currentWeight - data.goalWeight) / data.currentWeight) * 100
   ));
 
   return (
     <div className="fitness-container">
       <Sidebar />
-      
+
       <div className="fitness-wrapper">
         {/* Header Section */}
         <header className={`fitness-header ${isLoaded ? 'loaded' : ''}`}>
           <div className="header-flex">
             <Activity className="icon-float" size={40} color="#f9a8d4" />
-            <h1 className="fitness-title">{greetings[Math.floor(Math.random()*greetings.length)]} {data.username}</h1>
+            <h1 className="fitness-title">{greetings[Math.floor(Math.random() * greetings.length)]} {data.username}</h1>
           </div>
         </header>
 
@@ -141,14 +183,14 @@ export default function FitnessTracker() {
             <TrendingDown size={24} color="#f9a8d4" />
             <h2 style={{ margin: 0 }}>Weight Progress</h2>
           </div>
-          
+
           <div className="stats-grid">
             <div className="stat-box">
               <p className="stat-label">Current</p>
               <p className="stat-value">{data.currentWeight}</p>
               <p className="stat-unit">{data.weightUnit}</p>
             </div>
-            
+
             <div className="stat-box goal">
               <p className="stat-label">Goal</p>
               <p className="stat-value">{data.goalWeight}</p>
@@ -167,6 +209,9 @@ export default function FitnessTracker() {
               <div className="progress-fill" style={{ width: `${progressPercentage}%` }} />
             </div>
           </div>
+          <div className="update-weight">
+            <button className="update-button">Update Weight</button>
+          </div>
         </div>
 
         {/* Workout History Section */}
@@ -178,9 +223,9 @@ export default function FitnessTracker() {
 
           <div className="history-cards">
             {workoutHistory.map((session, sessionIndex) => (
-              <HistoryCard 
+              <HistoryCard
                 key={sessionIndex}
-                session={session} 
+                session={session}
                 sessionIndex={sessionIndex}
                 isLoaded={isLoaded}
               />
@@ -198,9 +243,10 @@ export default function FitnessTracker() {
       </button>
 
       {/* Workout Modal */}
-      <AddWorkout 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
+      <AddWorkout
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmitWorkout={addWorkoutSession}
       />
     </div>
   );

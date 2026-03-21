@@ -24,9 +24,12 @@ body {
 }
 
 @keyframes float {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0px);
   }
+
   50% {
     transform: translateY(-10px);
   }
@@ -225,6 +228,29 @@ body {
   z-index: 1000;
 }
 
+.update-weight {
+  margin-top: 24px
+}
+
+.update-button {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  border: none;
+  border-radius: 30px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  box-shadow: 0 8px 24px rgba(240, 147, 251, 0.4);
+  transition: all 0.3s ease;
+  z-index: 1000;
+  cursor: pointer;
+}
+
+.update-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(240, 147, 251, 0.5);
+}
+
 .log-button:hover {
   transform: scale(1.05);
   box-shadow: 0 12px 32px rgba(240, 147, 251, 0.5);
@@ -288,7 +314,7 @@ body {
   color: #f9a8d4;
 }
 
-.save-button{
+.save-button {
   position: fixed;
   bottom: 24px;
   right: 250px;

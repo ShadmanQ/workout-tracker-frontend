@@ -1,18 +1,50 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Plus } from 'lucide-react';
 import './AddWorkout.css';
 
-export default function AddWorkout({ isOpen, onClose }) {
+export default function AddWorkout({ isOpen, onClose, onSubmitWorkout }) {
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
-  
-  // Store workout data as objects, not components
+  const [searchData, setSearchData] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showResults, setShowResults] = useState(false);
   const [workouts, setWorkouts] = useState([
-    { id: 1, exercise: '', weight: '', reps: '' } // Initial row
+    { id: 1, exercise: '', weight: '', reps: '' }
   ]);
+
+  // Close results when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (!event.target.closest('.exercise-search-container')) {
+        setShowResults(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   // Don't render anything if modal is closed
   if (!isOpen) return null;
 
+  const handleSubmit = () => {
+
+    const saveDate = new Date(selectedDate).toLocaleString('default', { month: 'long', day: 'numeric', year: 'numeric' })
+    // Format your data
+    const newSession = {
+      date: saveDate,
+      workouts: workouts.map(w => ({
+        name: w.exercise,
+        type: 'weight',
+        value: `${w.weight} lbs × ${w.reps} reps`
+      }))
+    };
+
+    // Call parent's function
+    onSubmitWorkout(newSession);
+
+    // Close modal
+    onClose();
+  };
   // Add a new workout row
   const addWorkoutRow = () => {
     const newWorkout = {
@@ -23,11 +55,68 @@ export default function AddWorkout({ isOpen, onClose }) {
     };
     setWorkouts([...workouts, newWorkout]);
   };
+  // Optimized fetch with debouncing
+  const fetchData = async (value) => {
+    if (value.length < 3) {
+      setSearchData([]);
+      setShowResults(false);
+      return;
+    }
+
+    const url = `https://exercisedb.p.rapidapi.com/exercises/name/${value}`;
+    const options = {
+      method: 'GET',
+      headers: {
+        'x-rapidapi-key': process.env.REACT_APP_EXERCISE_API_KEY,
+        'x-rapidapi-host': 'exercisedb.p.rapidapi.com',
+        'Content-Type': 'application/json'
+      }
+    };
+
+    try {
+      const response = await fetch(url, options);
+      const result = await response.json();
+      setSearchData(result.slice(0, 10)); // Limit to 10 results
+      setShowResults(true);
+    } catch (error) {
+      console.error('Error fetching exercises:', error);
+      setSearchData([]);
+    }
+  };
+
+  // Debounce to avoid too many API calls
+  const debounce = (func, delay) => {
+    let timeoutId;
+    return (...args) => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => func(...args), delay);
+    };
+  };
+
+  // Create debounced version
+  const debouncedFetch = debounce(fetchData, 500);
+
+  // Handle input change
+  const handleSearchChange = (workoutId, value) => {
+    setSearchQuery(value);
+    updateWorkout(workoutId, 'exercise', value);
+    debouncedFetch(value);
+  };
+
+  // Handle selecting an exercise
+  const handleSelectExercise = (workoutId, exerciseName) => {
+    updateWorkout(workoutId, 'exercise', exerciseName);
+    setSearchQuery(exerciseName);
+    setShowResults(false);
+    setSearchData([]);
+  };
+
+
 
   // Update a specific workout field
   const updateWorkout = (id, field, value) => {
-    setWorkouts(workouts.map(workout => 
-      workout.id === id 
+    setWorkouts(workouts.map(workout =>
+      workout.id === id
         ? { ...workout, [field]: value }
         : workout
     ));
@@ -39,7 +128,6 @@ export default function AddWorkout({ isOpen, onClose }) {
         <div className="modal-header">
           <h2 className="modal-title">New Workout</h2>
           <button className="close-button" onClick={onClose}>
-            ×
           </button>
         </div>
 
@@ -66,16 +154,36 @@ export default function AddWorkout({ isOpen, onClose }) {
                 <label className="form-label" htmlFor={`exercise-name-${workout.id}`}>
                   Exercise
                 </label>
-                <input
-                  id={`exercise-name-${workout.id}`}
-                  type="text"
-                  className="workout-input"
-                  placeholder="Bench Press"
-                  value={workout.exercise}
-                  onChange={(e) => updateWorkout(workout.id, 'exercise', e.target.value)}
-                />
-              </div>
+                <div className="exercise-search-container">
+                  <input
+                    id={`exercise-name-${workout.id}`}
+                    type="text"
+                    className="workout-input"
+                    placeholder="Start typing (e.g., bench press)"
+                    value={workout.exercise}
+                    onChange={(e) => handleSearchChange(workout.id, e.target.value)}
+                    onFocus={() => workout.exercise.length >= 3 && setShowResults(true)}
+                    autoComplete="off"
+                  />
 
+                  {showResults && searchData.length > 0 && (
+                    <div className="search-results">
+                      {searchData.map((data, index) => (
+                        <div
+                          key={data.id || index}
+                          className="search-result-item"
+                          onClick={() => handleSelectExercise(workout.id, data.name)}
+                        >
+                          <span className="exercise-name">{data.name}</span>
+                          <span className="exercise-meta">
+                            {data.bodyPart} • {data.equipment}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
               <div className="form-group exercise-value-group">
                 <label className="form-label" htmlFor={`exercise-weight-${workout.id}`}>
                   Weight (lbs)
@@ -105,7 +213,6 @@ export default function AddWorkout({ isOpen, onClose }) {
               </div>
             </div>
           ))}
-
           {/* Add button below all workout rows */}
           <button className="add-exercise-button-full" type="button" onClick={addWorkoutRow}>
             <Plus size={20} />
@@ -113,7 +220,7 @@ export default function AddWorkout({ isOpen, onClose }) {
           </button>
         </div>
 
-        <button className="submit-button">
+        <button className="submit-button" onClick={handleSubmit}>
           Submit!
         </button>
       </div>
